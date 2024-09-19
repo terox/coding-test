@@ -1,0 +1,15 @@
+services:
+  php:
+    container_name: 'tl.discounts.php.project'
+
+    build:
+      context: .
+      target: app_dev
+      args:
+        ENVIRONMENT: dev
+
+    ports:
+      - 8080:8080
+
+    volumes:
+      - .:/app

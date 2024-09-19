@@ -1,0 +1,3 @@
+#!/bin/sh
+
+docker exec -ti tl.discounts.php.project /bin/sh

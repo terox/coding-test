@@ -1,0 +1,6 @@
+.idea
+vendor/
+
+# Testing
+.phpunit.result.cache
+/phpunit.xml

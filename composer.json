@@ -1,0 +1,23 @@
+{
+    "name": "teamleader/discount",
+    "description": "",
+    "type": "project",
+    "require": {
+        "php": ">=8.3",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Teamleader\\Discounts\\Core\\": "src/Core",
+            "Teamleader\\Discounts\\Shared\\": "src/Shared"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Teamleader\\Discounts\\Tests\\": "tests/"
+        }
+    }
+}
