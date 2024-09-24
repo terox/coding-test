@@ -3,4 +3,5 @@ vendor/
 
 # Testing
 .phpunit.result.cache
+.phpunit.cache
 /phpunit.xml
