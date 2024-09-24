@@ -13,6 +13,11 @@ abstract class CollectionBase implements Collection, \IteratorAggregate
     ) {
     }
 
+    public static function empty(): static
+    {
+        return new static([]);
+    }
+
     public function getIterator(): Traversable
     {
         return new \ArrayIterator($this->items);
@@ -21,10 +26,5 @@ abstract class CollectionBase implements Collection, \IteratorAggregate
     public function isEmpty(): bool
     {
         return count($this->items) > 0;
-    }
-
-    public static function empty(): static
-    {
-        return new static([]);
     }
 }
