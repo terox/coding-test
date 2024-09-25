@@ -40,8 +40,8 @@ final class DiscountCustomerRevenue extends DiscountBase
             throw new DiscountConfigurationPropertyMissing(self::class, self::KEY_THRESHOLD);
         }
 
-        if(!$config->isKeyType(self::KEY_THRESHOLD, 'float')) {
-            throw new DiscountConfigurationInvalidTypeValue(self::class, self::KEY_THRESHOLD, 'float');
+        if(!$config->isKeyType(self::KEY_THRESHOLD, 'number')) {
+            throw new DiscountConfigurationInvalidTypeValue(self::class, self::KEY_THRESHOLD, 'number');
         }
 
         if(($value = $config->get(self::KEY_THRESHOLD)) < 0) {
@@ -55,8 +55,8 @@ final class DiscountCustomerRevenue extends DiscountBase
             throw new DiscountConfigurationPropertyMissing(self::class, self::KEY_DISCOUNT);
         }
 
-        if(!$config->isKeyType(self::KEY_DISCOUNT, 'int')) {
-            throw new DiscountConfigurationInvalidTypeValue(self::class, self::KEY_DISCOUNT, 'int');
+        if(!$config->isKeyType(self::KEY_DISCOUNT, 'number')) {
+            throw new DiscountConfigurationInvalidTypeValue(self::class, self::KEY_DISCOUNT, 'number');
         }
 
         if(($value = $config->get(self::KEY_DISCOUNT)) < 0) {

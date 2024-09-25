@@ -11,12 +11,21 @@ use Teamleader\Discounts\Tests\Core\Discount\Domain\DiscountNameMother;
 
 final class DiscountCustomerRevenueMother
 {
-    public static function create(float $threshold, int $discount): DiscountCustomerRevenue
+    public static function withRevenue(float $threshold, int $discount): DiscountCustomerRevenue
     {
         return new DiscountCustomerRevenue(
             DiscountIdMother::create(),
             DiscountNameMother::create(),
             DiscountConfigurationMother::withCustomerRevenue($threshold, $discount)
+        );
+    }
+
+    public static function withConfiguration(array $configuration): DiscountCustomerRevenue
+    {
+        return new DiscountCustomerRevenue(
+            DiscountIdMother::create(),
+            DiscountNameMother::create(),
+            DiscountConfigurationMother::create($configuration)
         );
     }
 }

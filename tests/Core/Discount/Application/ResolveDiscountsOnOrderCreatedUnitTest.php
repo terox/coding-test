@@ -45,7 +45,7 @@ final class ResolveDiscountsOnOrderCreatedUnitTest extends DiscountModuleTestCas
     public function it_should_apply_order_discount_based_on_customer_revenue(): void
     {
         $orderEvent          = OrderCreatedMother::createOrder2();
-        $discountRevenue     = DiscountCustomerRevenueMother::create(1000.0, 10);
+        $discountRevenue     = DiscountCustomerRevenueMother::withRevenue(1000.0, 10);
         $customer            = CustomerResponseMother::withRevenue(1505.95);
         $discountResultEvent = DiscountAppliedMother::create(
             $discountRevenue->id()->value(),
@@ -57,6 +57,21 @@ final class ResolveDiscountsOnOrderCreatedUnitTest extends DiscountModuleTestCas
         $this->shouldReturnProducts(new ProductsResponse());
         $this->repositoryReturnNextDiscounts(new Discounts($discountRevenue));
         $this->shouldPublishDiscountAppliedDomainEvent($discountResultEvent);
+
+        $this->notify($orderEvent, $this->subscriber);
+    }
+
+    #[Test]
+    public function it_should_not_apply_order_discount_based_on_customer_revenue_due_min_threshold(): void
+    {
+        $orderEvent          = OrderCreatedMother::createOrder2();
+        $discountRevenue     = DiscountCustomerRevenueMother::withRevenue(1600, 10);
+        $customer            = CustomerResponseMother::withRevenue(1505.95);
+
+        $this->shouldReturnCustomer($customer);
+        $this->shouldReturnProducts(new ProductsResponse());
+        $this->repositoryReturnNextDiscounts(new Discounts($discountRevenue));
+        $this->shouldNotPublishDomainEvent();
 
         $this->notify($orderEvent, $this->subscriber);
     }

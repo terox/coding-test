@@ -37,8 +37,9 @@ class Data
         $value = $this->get($key);
 
         return match ($type) {
-            'int'   => is_int($value),
-            'float' => is_float($value),
+            'int'    => is_int($value),
+            'float'  => is_float($value),
+            'number' => is_int($value) || is_float($value),
             default => false,
         };
     }
