@@ -35,13 +35,6 @@ abstract class TestCase extends MockeryTestCase
         $subscriber($event);
     }
 
-    protected function shouldPublishDomainEvent(DomainEvent $domainEvent): void
-    {
-        $this->eventBus()
-            ->expects('publish')
-            ->andReturnNull();
-    }
-
     protected function shouldNotPublishDomainEvent(): void
     {
         $this->eventBus()
