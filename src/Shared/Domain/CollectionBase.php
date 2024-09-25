@@ -15,7 +15,7 @@ abstract class CollectionBase implements Collection, \IteratorAggregate
 
     public static function empty(): static
     {
-        return new static([]);
+        return new static();
     }
 
     public function getIterator(): Traversable
