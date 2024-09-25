@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Teamleader\Discounts\Tests\Core\Order\Domain\Event;
 
-use Teamleader\Discounts\Core\Order\Domain\Event\OrderCreated;
+use Teamleader\Discounts\Core\Shared\Domain\Order\Event\OrderCreated;
 use Teamleader\Discounts\Shared\Domain\ValueObject\Identity;
 
 final class OrderCreatedMother

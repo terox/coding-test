@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Teamleader\Discounts\Core\Order\Domain\Event;
+namespace Teamleader\Discounts\Core\Shared\Domain\Order\Event;
 
 use Teamleader\Discounts\Shared\Domain\Bus\Event\DomainEvent;
 
@@ -10,9 +10,9 @@ final class OrderCreated extends DomainEvent
 {
     public function __construct(
         int $id,
-        private int $customer,
-        private array $items,
-        private float $total,
+        private readonly int $customer,
+        private readonly array $items,
+        private readonly float $total,
         ?string $eventId = null,
         ?float $occurredOn = null
     ) {
