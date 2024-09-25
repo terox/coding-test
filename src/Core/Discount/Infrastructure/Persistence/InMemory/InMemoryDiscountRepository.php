@@ -12,6 +12,7 @@ use Teamleader\Discounts\Core\Discount\Domain\DiscountName;
 use Teamleader\Discounts\Core\Discount\Domain\DiscountRepository;
 use Teamleader\Discounts\Core\Discount\Domain\Discounts;
 use Teamleader\Discounts\Core\Discount\Domain\Type\DiscountCategoryCheapest;
+use Teamleader\Discounts\Core\Discount\Domain\Type\DiscountCategoryFreeItem;
 use Teamleader\Discounts\Core\Discount\Domain\Type\DiscountCustomerRevenue;
 
 class InMemoryDiscountRepository implements DiscountRepository
@@ -29,11 +30,19 @@ class InMemoryDiscountRepository implements DiscountRepository
             ),
             new DiscountCategoryCheapest(
                 new DiscountId(2),
-                new DiscountName('Category 1 Discount for 2 or more items'),
+                new DiscountName('Category 1 Discount for 2 or more items in cheapest'),
                 new DiscountConfiguration([
                     'category_id' => 1,
                     'threshold'   => 2,
                     'discount'    => 20
+                ])
+            ),
+            new DiscountCategoryFreeItem(
+                new DiscountId(3),
+                new DiscountName('Category 2 Discount for each 5 items, the sixth is free'),
+                new DiscountConfiguration([
+                    'category_id' => 2,
+                    'threshold'   => 5
                 ])
             )
         );

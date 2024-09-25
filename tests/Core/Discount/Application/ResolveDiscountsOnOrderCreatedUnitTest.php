@@ -8,11 +8,11 @@ use PHPUnit\Framework\Attributes\Test;
 use Teamleader\Discounts\Core\Discount\Application\Resolver\DiscountResolver;
 use Teamleader\Discounts\Core\Discount\Application\Resolver\ResolveDiscountsOnOrderCreated;
 use Teamleader\Discounts\Core\Discount\Domain\Discounts;
-use Teamleader\Discounts\Core\Product\Application\ProductsResponse;
 use Teamleader\Discounts\Tests\Core\Customer\Application\CustomerResponseMother;
 use Teamleader\Discounts\Tests\Core\Discount\DiscountModuleTestCase;
 use Teamleader\Discounts\Tests\Core\Discount\Domain\Event\DiscountAppliedMother;
 use Teamleader\Discounts\Tests\Core\Discount\Domain\Type\DiscountCategoryCheapestMother;
+use Teamleader\Discounts\Tests\Core\Discount\Domain\Type\DiscountCategoryFreeItemMother;
 use Teamleader\Discounts\Tests\Core\Discount\Domain\Type\DiscountCustomerRevenueMother;
 use Teamleader\Discounts\Tests\Core\Order\Domain\Event\OrderCreatedMother;
 use Teamleader\Discounts\Tests\Core\Product\Application\ProductResponseMother;
@@ -112,6 +112,49 @@ final class ResolveDiscountsOnOrderCreatedUnitTest extends DiscountModuleTestCas
         $this->shouldReturnProducts(
             ProductResponseMother::create('A101', 'Screwdriver', 1, 9.75),
             ProductResponseMother::create('A102', 'Electric screwdriver', 1, 49.5),
+        );
+        $this->repositoryReturnNextDiscounts(new Discounts($discountCheapest));
+        $this->shouldNotPublishDomainEvent();
+
+        $this->notify($orderEvent, $this->subscriber);
+    }
+
+    #[Test]
+    public function it_should_apply_category_free_item_discount(): void
+    {
+        $orderEvent          = OrderCreatedMother::createOrder1();
+        $discountCheapest    = DiscountCategoryFreeItemMother::with(2, 5);
+        $customer            = CustomerResponseMother::create();
+        $discountResultEvent = DiscountAppliedMother::create(
+            $discountCheapest->id()->value(),
+            $orderEvent->aggregateId(),
+            4.99
+        );
+
+        $this->shouldReturnCustomer($customer);
+        $this->shouldReturnProducts(
+            ProductResponseMother::create('B101', 'Basic on-off switch', 2, 4.99),
+            ProductResponseMother::create('B102', 'Press button', 2, 4.99),
+            ProductResponseMother::create('B103', 'Switch with motion detector', 2, 12.95),
+        );
+        $this->repositoryReturnNextDiscounts(new Discounts($discountCheapest));
+        $this->shouldPublishDiscountAppliedDomainEvent($discountResultEvent);
+
+        $this->notify($orderEvent, $this->subscriber);
+    }
+
+    #[Test]
+    public function it_should_not_apply_category_free_item_discount_due_threshold(): void
+    {
+        $orderEvent          = OrderCreatedMother::createOrder1();
+        $discountCheapest    = DiscountCategoryFreeItemMother::with(2, 10);
+        $customer            = CustomerResponseMother::create();
+
+        $this->shouldReturnCustomer($customer);
+        $this->shouldReturnProducts(
+            ProductResponseMother::create('B101', 'Basic on-off switch', 2, 4.99),
+            ProductResponseMother::create('B102', 'Press button', 2, 4.99),
+            ProductResponseMother::create('B103', 'Switch with motion detector', 2, 12.95),
         );
         $this->repositoryReturnNextDiscounts(new Discounts($discountCheapest));
         $this->shouldNotPublishDomainEvent();
