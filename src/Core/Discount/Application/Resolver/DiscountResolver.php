@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Teamleader\Discounts\Core\Discount\Application\Resolver;
 
 use Teamleader\Discounts\Core\Customer\Application\FindById\GetCustomer;
+use Teamleader\Discounts\Core\Discount\Application\DiscountResultConverter;
+use Teamleader\Discounts\Core\Discount\Application\DiscountResultsResponse;
 use Teamleader\Discounts\Core\Discount\Domain\DiscountRepository;
-use Teamleader\Discounts\Core\Discount\Domain\DiscountResults;
+use Teamleader\Discounts\Core\Discount\Domain\DiscountResult;
 use Teamleader\Discounts\Core\Discount\Domain\Event\DiscountApplied;
 use Teamleader\Discounts\Core\Product\Application\FindById\GetProducts;
 use Teamleader\Discounts\Core\Shared\Domain\Customer\Customer;
@@ -29,12 +31,20 @@ final readonly class DiscountResolver
     ) {
     }
 
-    public function __invoke(Order $order): DiscountResults
+    private function toResponse(array $discounts): DiscountResultsResponse
+    {
+        return new DiscountResultsResponse(...array_map(
+            static fn(DiscountResult $result) => (new DiscountResultConverter())($result),
+            $discounts
+        ));
+    }
+
+    public function __invoke(Order $order): DiscountResultsResponse
     {
         $discounts = $this->repository->findAll();
 
         if($discounts->isEmpty()) {
-            return DiscountResults::empty();
+            return $this->toResponse([]);
         }
 
         // Gather information.
@@ -71,6 +81,6 @@ final readonly class DiscountResolver
             $effectiveDiscounts[] = $discountResult;
         }
 
-        return new DiscountResults(...$effectiveDiscounts);
+        return $this->toResponse($effectiveDiscounts);
     }
 }
