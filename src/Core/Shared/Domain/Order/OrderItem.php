@@ -8,7 +8,7 @@ interface OrderItem
 {
     public function productId(): string;
 
-    public function quantity(): int;
+    public function quantity(): float;
 
     public function price(): float;
 }
