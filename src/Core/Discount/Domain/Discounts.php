@@ -9,19 +9,12 @@ use Teamleader\Discounts\Shared\Domain\CollectionBase;
 /**
  * @method iterable<Discount> getIterator()
  * @method Discount|null getOneOrNull()
+ * @method Discount[] toArray()
  */
 final class Discounts extends CollectionBase
 {
     public function __construct(Discount ...$discounts)
     {
         parent::__construct($discounts);
-    }
-
-    /**
-     * @return Discount[]
-     */
-    public function toArray(): array
-    {
-        return $this->items;
     }
 }

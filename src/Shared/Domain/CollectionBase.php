@@ -32,4 +32,9 @@ abstract class CollectionBase implements Collection, \IteratorAggregate
     {
         return 0 === count($this->items);
     }
+
+    public function toArray(): array
+    {
+        return $this->items;
+    }
 }
