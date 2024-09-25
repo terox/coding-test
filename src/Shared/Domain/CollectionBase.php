@@ -23,6 +23,11 @@ abstract class CollectionBase implements Collection, \IteratorAggregate
         return new \ArrayIterator($this->items);
     }
 
+    public function getOneOrNull(int $index): mixed
+    {
+        return $this->items[$index] ?? null;
+    }
+
     public function isEmpty(): bool
     {
         return 0 === count($this->items);

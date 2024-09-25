@@ -8,17 +8,13 @@ use Teamleader\Discounts\Shared\Domain\CollectionBase;
 
 /**
  * @method iterable<Discount> getIterator()
+ * @method Discount|null getOneOrNull()
  */
 final class Discounts extends CollectionBase
 {
     public function __construct(Discount ...$discounts)
     {
         parent::__construct($discounts);
-    }
-
-    public function getOneOrNull(int $index): ?Discount
-    {
-        return $this->items[$index] ?? null;
     }
 
     /**
