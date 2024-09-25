@@ -25,6 +25,6 @@ abstract class CollectionBase implements Collection, \IteratorAggregate
 
     public function isEmpty(): bool
     {
-        return count($this->items) > 0;
+        return 0 === count($this->items);
     }
 }
