@@ -6,6 +6,9 @@ namespace Teamleader\Discounts\Core\Discount\Domain;
 
 use Teamleader\Discounts\Shared\Domain\CollectionBase;
 
+/**
+ * @method iterable<Discount> getIterator()
+ */
 final class Discounts extends CollectionBase
 {
     public function __construct(Discount ...$discounts)
