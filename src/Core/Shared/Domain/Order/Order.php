@@ -17,12 +17,15 @@ interface Order
 
     public function customer(): int;
 
+    /**
+     * @return OrderItem[]
+     */
     public function items(): array;
 
+    /**
+     * @return string[]
+     */
     public function itemsIds(): array;
-
-    // TODO
-    //public function discountCode(): ?string;
 
     public function total(): float;
 }
