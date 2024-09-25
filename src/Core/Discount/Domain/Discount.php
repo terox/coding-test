@@ -24,8 +24,8 @@ interface Discount
      * @param Customer  $customer
      * @param Product[] $products
      *
-     * @return DiscountResult
+     * @return DiscountResults
      */
-    public function apply(Order $order, Customer $customer, iterable $products): DiscountResult;
+    public function apply(Order $order, Customer $customer, iterable $products): DiscountResults;
 }
 

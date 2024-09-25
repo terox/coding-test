@@ -10,6 +10,7 @@ use Teamleader\Discounts\Core\Discount\Domain\DiscountConfiguration;
 use Teamleader\Discounts\Core\Discount\Domain\DiscountId;
 use Teamleader\Discounts\Core\Discount\Domain\DiscountName;
 use Teamleader\Discounts\Core\Discount\Domain\DiscountResult;
+use Teamleader\Discounts\Core\Discount\Domain\DiscountResults;
 use Teamleader\Discounts\Core\Discount\Domain\Exception\DiscountConfigurationInvalidTypeValue;
 use Teamleader\Discounts\Core\Discount\Domain\Exception\DiscountConfigurationPropertyMissing;
 use Teamleader\Discounts\Core\Discount\Domain\Exception\DiscountConfigurationRange;
@@ -64,15 +65,17 @@ final class DiscountCustomerRevenue extends DiscountBase
         }
     }
 
-    public function apply(Order $order, Customer $customer, iterable $products): DiscountResult
+    public function apply(Order $order, Customer $customer, iterable $products): DiscountResults
     {
         if($customer->revenue() <= $this->config()->get(self::KEY_THRESHOLD)) {
-            return DiscountResult::noDiscount($this->id());
+            return DiscountResults::empty();
         }
 
-        return DiscountResult::create(
-            $this->id(),
-            $order->total() * ($this->config()->get(self::KEY_DISCOUNT) / 100)
+        return new DiscountResults(
+            DiscountResult::create(
+                $this->id(),
+                $order->total() * ($this->config()->get(self::KEY_DISCOUNT) / 100)
+            )
         );
     }
 }

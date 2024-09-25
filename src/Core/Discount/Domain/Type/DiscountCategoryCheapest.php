@@ -10,6 +10,7 @@ use Teamleader\Discounts\Core\Discount\Domain\DiscountConfiguration;
 use Teamleader\Discounts\Core\Discount\Domain\DiscountId;
 use Teamleader\Discounts\Core\Discount\Domain\DiscountName;
 use Teamleader\Discounts\Core\Discount\Domain\DiscountResult;
+use Teamleader\Discounts\Core\Discount\Domain\DiscountResults;
 use Teamleader\Discounts\Core\Discount\Domain\Exception\DiscountConfigurationInvalidTypeValue;
 use Teamleader\Discounts\Core\Discount\Domain\Exception\DiscountConfigurationPropertyMissing;
 use Teamleader\Discounts\Core\Discount\Domain\Exception\DiscountConfigurationRange;
@@ -105,7 +106,7 @@ final class DiscountCategoryCheapest extends DiscountBase
         return false;
     }
 
-    public function apply(Order $order, Customer $customer, iterable $products): DiscountResult
+    public function apply(Order $order, Customer $customer, iterable $products): DiscountResults
     {
         $targetCategory = $this->config()->get(self::KEY_CATEGORY_ID);
 
@@ -121,7 +122,7 @@ final class DiscountCategoryCheapest extends DiscountBase
         }
 
         if(0 === count($categoryItems)) {
-            return DiscountResult::noDiscount($this->id());
+            return DiscountResults::empty();
         }
 
         // 2. Count total items to be sure that they reach the minimum threshold
@@ -133,7 +134,7 @@ final class DiscountCategoryCheapest extends DiscountBase
         );
 
         if($totalItems < $this->config()->get(self::KEY_THRESHOLD)) {
-            return DiscountResult::noDiscount($this->id());
+            return DiscountResults::empty();
         }
 
         // 3. Get the cheapest product
@@ -148,9 +149,11 @@ final class DiscountCategoryCheapest extends DiscountBase
 
         // 4. Apply the discount
 
-        return DiscountResult::create(
-            $this->id(),
-            ($cheapestItem->quantity() * $cheapestItem->price()) * ($this->config()->get(self::KEY_DISCOUNT) / 100)
+        return new DiscountResults(
+            DiscountResult::create(
+                $this->id(),
+                ($cheapestItem->quantity() * $cheapestItem->price()) * ($this->config()->get(self::KEY_DISCOUNT) / 100)
+            )
         );
     }
 }

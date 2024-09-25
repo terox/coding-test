@@ -61,24 +61,26 @@ final readonly class DiscountResolver
 
         $effectiveDiscounts = [];
         foreach($discounts as $discount) {
-            $discountResult = $discount->apply($order, $customer, $products);
+            $discountResults = $discount->apply($order, $customer, $products);
 
-            if(!$discountResult->isApplied()) {
+            if(!$discountResults->isApplied()) {
                 continue;
             }
 
             // If order has an ID means that it is confirmed and processed, so its expected side effects.
             // In any other case, maybe we are only querying if the order have some discount.
             if(null !== $order->id()) {
-                $this->eventBus->publish(new DiscountApplied(
-                    $discount->id()->value(),
-                    $order->id(),
-                    $discountResult->amount()
-                ));
+                foreach($discountResults as $discountResult) {
+                    $this->eventBus->publish(new DiscountApplied(
+                        $discount->id()->value(),
+                        $order->id(),
+                        $discountResult->amount()
+                    ));
+                }
             }
 
             // We add the effective discount to stack
-            $effectiveDiscounts[] = $discountResult;
+            $effectiveDiscounts += $discountResults->toArray();
         }
 
         return $this->toResponse($effectiveDiscounts);
