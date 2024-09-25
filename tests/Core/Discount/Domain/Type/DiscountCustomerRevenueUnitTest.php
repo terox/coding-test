@@ -10,7 +10,7 @@ use Teamleader\Discounts\Core\Discount\Domain\Exception\DiscountConfigurationPro
 use Teamleader\Discounts\Core\Discount\Domain\Exception\DiscountConfigurationRange;
 use Teamleader\Discounts\Tests\Core\Discount\DiscountModuleTestCase;
 
-final class DiscountCustomerRevenueTestCase extends DiscountModuleTestCase
+final class DiscountCustomerRevenueUnitTest extends DiscountModuleTestCase
 {
     #[Test]
     public function it_should_throw_exception_on_missing_threshold_key(): void
