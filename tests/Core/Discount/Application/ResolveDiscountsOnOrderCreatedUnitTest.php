@@ -8,7 +8,11 @@ use PHPUnit\Framework\Attributes\Test;
 use Teamleader\Discounts\Core\Discount\Application\Resolver\DiscountResolver;
 use Teamleader\Discounts\Core\Discount\Application\Resolver\ResolveDiscountsOnOrderCreated;
 use Teamleader\Discounts\Core\Discount\Domain\Discounts;
+use Teamleader\Discounts\Core\Product\Application\ProductsResponse;
+use Teamleader\Discounts\Tests\Core\Customer\Application\CustomerResponseMother;
 use Teamleader\Discounts\Tests\Core\Discount\DiscountModuleTestCase;
+use Teamleader\Discounts\Tests\Core\Discount\Domain\Event\DiscountAppliedMother;
+use Teamleader\Discounts\Tests\Core\Discount\Domain\Type\DiscountCustomerRevenueMother;
 use Teamleader\Discounts\Tests\Core\Order\Domain\Event\OrderCreatedMother;
 
 final class ResolveDiscountsOnOrderCreatedUnitTest extends DiscountModuleTestCase
@@ -35,5 +39,25 @@ final class ResolveDiscountsOnOrderCreatedUnitTest extends DiscountModuleTestCas
         $this->shouldNotPublishDomainEvent();
 
         $this->notify($event, $this->subscriber);
+    }
+
+    #[Test]
+    public function it_should_apply_order_discount_based_on_customer_revenue(): void
+    {
+        $orderEvent          = OrderCreatedMother::createOrder2();
+        $discountRevenue     = DiscountCustomerRevenueMother::create(1000.0, 10);
+        $customer            = CustomerResponseMother::withRevenue(1505.95);
+        $discountResultEvent = DiscountAppliedMother::create(
+            $discountRevenue->id()->value(),
+            $orderEvent->aggregateId(),
+            2.495
+        );
+
+        $this->shouldReturnCustomer($customer);
+        $this->shouldReturnProducts(new ProductsResponse());
+        $this->repositoryReturnNextDiscounts(new Discounts($discountRevenue));
+        $this->shouldPublishDiscountAppliedDomainEvent($discountResultEvent);
+
+        $this->notify($orderEvent, $this->subscriber);
     }
 }
