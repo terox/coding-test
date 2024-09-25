@@ -10,8 +10,8 @@ final readonly class OrderItemMessage implements OrderItem
 {
     public function __construct(
         private string $id,
-        private int    $quantity,
-        private float  $price,
+        private float $quantity,
+        private float $price,
     ) {
     }
 
@@ -20,7 +20,7 @@ final readonly class OrderItemMessage implements OrderItem
         return $this->id;
     }
 
-    public function quantity(): int
+    public function quantity(): float
     {
         return $this->quantity;
     }

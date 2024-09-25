@@ -8,24 +8,12 @@ use Teamleader\Discounts\Core\Shared\Domain\Order\Order;
 
 final readonly class OrderMessage implements Order
 {
-    private array $items;
-
     public function __construct(
         private int $orderId,
         private int $customerId,
-        array $items,
+        private array $items,
         private float $total
     ) {
-        $itemMessages = [];
-        foreach($items as $item) {
-            $itemMessages[] = new OrderItemMessage(
-                $item['product-id'],
-                $item['quantity'],
-                $item['unit-price'],
-            );
-        }
-
-        $this->items = $itemMessages;
     }
 
     public function id(): int

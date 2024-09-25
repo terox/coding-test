@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Teamleader\Discounts\Core\Discount\Application\Resolver;
 
+use Teamleader\Discounts\Core\Shared\Application\OrderItemMessage;
 use Teamleader\Discounts\Core\Shared\Application\OrderMessage;
 use Teamleader\Discounts\Core\Shared\Domain\Order\Event\OrderCreated;
 use Teamleader\Discounts\Shared\Domain\Bus\Event\DomainEventSubscriber;
@@ -25,7 +26,11 @@ final readonly class ResolveDiscountsOnOrderCreated implements DomainEventSubscr
         $this->resolver->__invoke(new OrderMessage(
             $event->aggregateId(),
             $event->customer(),
-            $event->items(),
+            array_map(static fn(array $item) => new OrderItemMessage(
+                $item['product-id'],
+                (int)$item['quantity'],
+                (float)$item['unit-price'],
+            ), $event->items()),
             $event->total()
         ));
     }
