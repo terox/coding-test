@@ -52,18 +52,18 @@ final class OrderCreatedMother
         return self::create(2, 2, $items, 24.95);
     }
 
-    public static function createOrder3(): OrderCreated
+    public static function createOrder3(int $quantityItem1 = 2, int $quantityItem2 = 1): OrderCreated
     {
         $items = [
             [
                 'product-id' => 'A101',
-                'quantity'   => 2,
+                'quantity'   => $quantityItem1,
                 'unit-price' => 9.75,
                 'total'      => 19.5
             ],
             [
                 'product-id' => 'A102',
-                'quantity'   => 1,
+                'quantity'   => $quantityItem2,
                 'unit-price' => 49.5,
                 'total'      => 49.5
             ]

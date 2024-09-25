@@ -12,8 +12,10 @@ use Teamleader\Discounts\Core\Product\Application\ProductsResponse;
 use Teamleader\Discounts\Tests\Core\Customer\Application\CustomerResponseMother;
 use Teamleader\Discounts\Tests\Core\Discount\DiscountModuleTestCase;
 use Teamleader\Discounts\Tests\Core\Discount\Domain\Event\DiscountAppliedMother;
+use Teamleader\Discounts\Tests\Core\Discount\Domain\Type\DiscountCategoryCheapestMother;
 use Teamleader\Discounts\Tests\Core\Discount\Domain\Type\DiscountCustomerRevenueMother;
 use Teamleader\Discounts\Tests\Core\Order\Domain\Event\OrderCreatedMother;
+use Teamleader\Discounts\Tests\Core\Product\Application\ProductResponseMother;
 
 final class ResolveDiscountsOnOrderCreatedUnitTest extends DiscountModuleTestCase
 {
@@ -54,7 +56,7 @@ final class ResolveDiscountsOnOrderCreatedUnitTest extends DiscountModuleTestCas
         );
 
         $this->shouldReturnCustomer($customer);
-        $this->shouldReturnProducts(new ProductsResponse());
+        $this->shouldReturnProducts();
         $this->repositoryReturnNextDiscounts(new Discounts($discountRevenue));
         $this->shouldPublishDiscountAppliedDomainEvent($discountResultEvent);
 
@@ -69,8 +71,49 @@ final class ResolveDiscountsOnOrderCreatedUnitTest extends DiscountModuleTestCas
         $customer            = CustomerResponseMother::withRevenue(1505.95);
 
         $this->shouldReturnCustomer($customer);
-        $this->shouldReturnProducts(new ProductsResponse());
+        $this->shouldReturnProducts();
         $this->repositoryReturnNextDiscounts(new Discounts($discountRevenue));
+        $this->shouldNotPublishDomainEvent();
+
+        $this->notify($orderEvent, $this->subscriber);
+    }
+
+    #[Test]
+    public function it_should_apply_category_cheapest_discount(): void
+    {
+        $orderEvent          = OrderCreatedMother::createOrder3();
+        $discountCheapest    = DiscountCategoryCheapestMother::with(1, 2, 20);
+        $customer            = CustomerResponseMother::create();
+        $discountResultEvent = DiscountAppliedMother::create(
+            $discountCheapest->id()->value(),
+            $orderEvent->aggregateId(),
+            3.9
+        );
+
+        $this->shouldReturnCustomer($customer);
+        $this->shouldReturnProducts(
+            ProductResponseMother::create('A101', 'Screwdriver', 1, 9.75),
+            ProductResponseMother::create('A102', 'Electric screwdriver', 1, 49.5),
+        );
+        $this->repositoryReturnNextDiscounts(new Discounts($discountCheapest));
+        $this->shouldPublishDiscountAppliedDomainEvent($discountResultEvent);
+
+        $this->notify($orderEvent, $this->subscriber);
+    }
+
+    #[Test]
+    public function it_should_apply_not_apply_category_cheapest_discount_due_threshold(): void
+    {
+        $orderEvent          = OrderCreatedMother::createOrder3();
+        $discountCheapest    = DiscountCategoryCheapestMother::with(1, 5, 20);
+        $customer            = CustomerResponseMother::create();
+
+        $this->shouldReturnCustomer($customer);
+        $this->shouldReturnProducts(
+            ProductResponseMother::create('A101', 'Screwdriver', 1, 9.75),
+            ProductResponseMother::create('A102', 'Electric screwdriver', 1, 49.5),
+        );
+        $this->repositoryReturnNextDiscounts(new Discounts($discountCheapest));
         $this->shouldNotPublishDomainEvent();
 
         $this->notify($orderEvent, $this->subscriber);

@@ -20,4 +20,13 @@ final class DiscountConfigurationMother
             'discount'  => $discount
         ]);
     }
+
+    public static function withCategoryCheapest(int $category, float $threshold, int $discount): DiscountConfiguration
+    {
+        return self::create([
+            'category_id' => $category,
+            'threshold'   => $threshold,
+            'discount'    => $discount
+        ]);
+    }
 }

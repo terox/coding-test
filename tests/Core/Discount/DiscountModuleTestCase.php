@@ -9,6 +9,7 @@ use Teamleader\Discounts\Core\Customer\Application\CustomerResponse;
 use Teamleader\Discounts\Core\Discount\Domain\DiscountRepository;
 use Teamleader\Discounts\Core\Discount\Domain\Discounts;
 use Teamleader\Discounts\Core\Discount\Domain\Event\DiscountApplied;
+use Teamleader\Discounts\Core\Product\Application\ProductResponse;
 use Teamleader\Discounts\Core\Product\Application\ProductsResponse;
 use Teamleader\Discounts\Tests\Shared\Infrastructure\Testing\PHPUnit\TestCase;
 
@@ -30,11 +31,11 @@ abstract class DiscountModuleTestCase extends TestCase
             ->andReturn($customer);
     }
 
-    protected function shouldReturnProducts(ProductsResponse $products): void
+    protected function shouldReturnProducts(ProductResponse ...$products): void
     {
         $this->queryBus()
             ->expects('ask')
-            ->andReturn($products);
+            ->andReturn(new ProductsResponse($products));
     }
 
     protected function shouldPublishDiscountAppliedDomainEvent(DiscountApplied $applied) :void
@@ -44,7 +45,7 @@ abstract class DiscountModuleTestCase extends TestCase
             ->withArgs(static function(DiscountApplied $arg) use ($applied) {
                 return $arg->aggregateId() === $applied->aggregateId() &&
                     $arg->orderId() === $applied->orderId() &&
-                    $arg->amount() === $applied->amount();
+                    number_format($arg->amount(), 2) === number_format($applied->amount(), 2);
             })
             ->andReturnNull();
     }
